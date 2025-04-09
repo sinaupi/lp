@@ -45,7 +45,7 @@
         const decoded = decode(code); // "1005004255862602|_omPAftL"
         const [productId, affTag] = decoded.split("|");
 
-        const res = await fetch(`/functions/product?id=${productId}`);
+        const res = await fetch(`/f/product?id=${productId}`);
         const data = await res.json();
 
         document.getElementById("app").innerHTML = `
