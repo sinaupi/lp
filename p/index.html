@@ -36,6 +36,7 @@
         const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(productUrl);
         const res = await fetch(proxyUrl);
         const html = await res.text();
+        console.log(html); // Tambahkan ini untuk debug
 
         const titleMatch = html.match(/<meta property="og:title" content="(.*?)"/);
         const imgMatch = html.match(/<meta property="og:image" content="(.*?)"/);
