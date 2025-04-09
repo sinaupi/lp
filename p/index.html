@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>AliExpress Deal</title>
@@ -7,48 +7,78 @@
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
-      padding: 1rem;
       margin: 0;
-      text-align: center;
-      background-color: #f9f9f9;
-      color: #333;
+      background: #f5f5f5;
+      display: flex;
+      justify-content: center;
+      padding: 2rem;
     }
-    #app {
-      max-width: 400px;
-      margin: 0 auto;
-      background: #fff;
-      padding: 1rem;
+    .card {
+      background: white;
+      display: flex;
       border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-    }
-    img {
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 700px;
       width: 100%;
-      border-radius: 10px;
-      margin: 1rem 0;
     }
-    h1 {
-      font-size: 1.1rem;
-      margin: 0.5rem 0;
+    .card img {
+      width: 45%;
+      object-fit: cover;
     }
-    .button {
-      display: inline-block;
-      padding: 0.75rem 1.5rem;
-      background: #ff4742;
+    .info {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      flex: 1;
+    }
+    .title {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+    .rating {
+      color: #ffa500;
+      margin-bottom: 15px;
+      font-size: 1rem;
+    }
+    .btn {
+      background-color: #ff4742;
       color: white;
+      padding: 10px 20px;
+      border-radius: 6px;
       text-decoration: none;
-      border-radius: 8px;
+      width: fit-content;
       font-weight: bold;
-      transition: background 0.3s ease;
+      transition: background 0.3s;
     }
-    .button:hover {
-      background: #d63c38;
+    .btn:hover {
+      background-color: #d83a35;
+    }
+    @media (max-width: 768px) {
+      .card {
+        flex-direction: column;
+      }
+      .card img {
+        width: 100%;
+        height: auto;
+      }
+      .info {
+        align-items: center;
+        text-align: center;
+      }
     }
   </style>
 </head>
 <body>
-  <div id="app">Loading...</div>
+  <div class="card" id="app">Loading...</div>
 
   <script>
+    function generateRating() {
+      const rating = (Math.random() * 0.6 + 4.3).toFixed(1);
+      return `${rating} / 5 ⭐`;
+    }
+
     async function loadProduct() {
       const params = new URLSearchParams(window.location.search);
       const productId = params.get("product");
@@ -63,13 +93,15 @@
       try {
         const res = await fetch(workerUrl);
         const data = await res.json();
+        const rating = generateRating();
 
         document.getElementById("app").innerHTML = `
           <img src="${data.image}" alt="Product Image">
-          <h1>${data.title}</h1>
-          <a href="${data.buy_url}" target="_blank" class="button">
-            🔗 Buy on AliExpress
-          </a>
+          <div class="info">
+            <div class="title">${data.title}</div>
+            <div class="rating">⭐ ${rating}</div>
+            <a href="${data.buy_url}" target="_blank" class="btn">🔗 Buy Now</a>
+          </div>
         `;
       } catch (err) {
         console.error(err);
