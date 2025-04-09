@@ -39,7 +39,7 @@
         const imgMatch = html.match(/<meta property="og:image" content="(.*?)"/);
 
 
-        const title = titleMatch ? titleMatch[1].replace(/ - AliExpress.*$/, '') : 'Product';
+        const title = titleMatch;
         const image = imgMatch ? imgMatch[1].replace(/\\/, '') : '';
 
         document.getElementById("app").innerHTML = `
