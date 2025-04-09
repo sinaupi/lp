@@ -2,13 +2,16 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <title>Best Deals</title>
+  <title>AliExpress Deal</title>
   <style>
     body { font-family: sans-serif; padding: 2rem; text-align: center; }
     img { max-width: 300px; margin: 1rem; }
     a.button {
-      display: inline-block; padding: 1rem 2rem;
-      background: red; color: white; text-decoration: none;
+      display: inline-block;
+      padding: 1rem 2rem;
+      background: red;
+      color: white;
+      text-decoration: none;
       border-radius: 8px;
     }
   </style>
@@ -17,37 +20,39 @@
   <div id="app">Loading...</div>
 
   <script>
-    function getQueryParam(param) {
-      const urlParams = new URLSearchParams(window.location.search);
-      return urlParams.get(param);
-    }
-
     async function loadProduct() {
-      const productId = getQueryParam('product');
-      const affTag = getQueryParam('aff');
+      const params = new URLSearchParams(window.location.search);
+      const productId = params.get("product");
+      const affTag = params.get("aff");
 
       if (!productId || !affTag) {
-        document.getElementById("app").innerText = "Missing product or affiliate info.";
+        document.getElementById("app").innerText = "Missing product or aff tag.";
         return;
       }
 
+      const productUrl = `https://www.aliexpress.com/item/${productId}.html`;
+
       try {
-        const res = await fetch(`https://lp.jevri-kurnia.workers.dev/?product=${productId}`);
+        const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(productUrl);
+        const res = await fetch(proxyUrl);
         const html = await res.text();
 
-        const title = html.match(/<meta property="og:title" content="(.*?)"/);
+        const titleMatch = html.match(/<meta property="og:title" content="(.*?)"/);
         const imgMatch = html.match(/<meta property="og:image" content="(.*?)"/);
 
-        const title = titleMatch ? titleMatch[1] '';
+        const title = titleMatch ? titleMatch[1] : '';
         const image = imgMatch ? imgMatch[1] : '';
 
         document.getElementById("app").innerHTML = `
           <h1>${title}</h1>
           <img src="${image}" alt="Product Image">
           <br>
-          <a href="https://s.click.aliexpress.com/e/${affTag}" target="_blank" class="button">🔗 Buy Now on AliExpress</a>
+          <a href="https://s.click.aliexpress.com/e/${affTag}" target="_blank" class="button">
+            🔗 Buy Now on AliExpress
+          </a>
         `;
-      } catch (e) {
+      } catch (err) {
+        console.error(err);
         document.getElementById("app").innerText = "Failed to load product.";
       }
     }
