@@ -3,16 +3,45 @@
 <head>
   <meta charset="UTF-8">
   <title>AliExpress Deal</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: sans-serif; padding: 2rem; text-align: center; }
-    img { max-width: 300px; margin: 1rem; }
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      padding: 1rem;
+      margin: 0;
+      text-align: center;
+      background-color: #f9f9f9;
+      color: #333;
+    }
+    #app {
+      max-width: 400px;
+      margin: 0 auto;
+      background: #fff;
+      padding: 1rem;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+    img {
+      width: 100%;
+      border-radius: 10px;
+      margin: 1rem 0;
+    }
+    h1 {
+      font-size: 1.1rem;
+      margin: 0.5rem 0;
+    }
     .button {
       display: inline-block;
-      padding: 1rem 2rem;
-      background: red;
+      padding: 0.75rem 1.5rem;
+      background: #ff4742;
       color: white;
       text-decoration: none;
       border-radius: 8px;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+    .button:hover {
+      background: #d63c38;
     }
   </style>
 </head>
@@ -29,7 +58,6 @@
         return;
       }
 
-      // Ganti dengan URL WORKER kamu
       const workerUrl = "https://lp.jevri-kurnia.workers.dev/?id=" + productId;
 
       try {
@@ -37,11 +65,10 @@
         const data = await res.json();
 
         document.getElementById("app").innerHTML = `
-          <h1>${data.title}</h1>
           <img src="${data.image}" alt="Product Image">
-          <br>
+          <h1>${data.title}</h1>
           <a href="${data.buy_url}" target="_blank" class="button">
-            🔗 Buy Now on AliExpress
+            🔗 Buy on AliExpress
           </a>
         `;
       } catch (err) {
