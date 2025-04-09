@@ -33,7 +33,8 @@
       const productUrl = `https://www.aliexpress.com/item/${productId}.html`;
 
       try {
-        const proxyUrl = "https://corsproxy.io/?" + encodeURIComponent(productUrl);
+        const proxyUrl = "https://api.allorigins.win/raw?url=" + encodeURIComponent(productUrl);
+
         const res = await fetch(proxyUrl);
         const html = await res.text();
         
