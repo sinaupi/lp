@@ -35,8 +35,9 @@
         const res = await fetch(`https://lp.jevri-kurnia.workers.dev/?product=${productId}`);
         const html = await res.text();
 
-        const titleMatch = html.match(/<title>(.*?)<\/title>/);
-        const imgMatch = html.match(/"imageUrl":"(.*?)"/);
+        const titleMatch = html.match(/<meta property="og:title" content="(.*?)"/);
+        const imgMatch = html.match(/<meta property="og:image" content="(.*?)"/);
+
 
         const title = titleMatch ? titleMatch[1].replace(/ - AliExpress.*$/, '') : 'Product';
         const image = imgMatch ? imgMatch[1].replace(/\\/, '') : '';
