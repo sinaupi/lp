@@ -5,78 +5,110 @@
   <title>AliExpress Deal</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
+    * { box-sizing: border-box; }
     body {
       font-family: 'Segoe UI', sans-serif;
       margin: 0;
-      background: #f5f5f5;
-      display: flex;
-      justify-content: center;
       padding: 2rem;
+      background: #f9f9f9;
+    }
+    .main-product {
+      display: flex;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      margin-bottom: 2rem;
+      flex-wrap: wrap;
+    }
+    .main-product img {
+      width: 100%;
+      max-width: 400px;
+      object-fit: cover;
+    }
+    .main-info {
+      flex: 1;
+      padding: 2rem;
+    }
+    .main-info h1 {
+      font-size: 1.5em;
+      margin-bottom: 1rem;
+    }
+    .rating {
+      margin: 1rem 0;
+      font-size: 1.1em;
+      color: #ffa500;
+    }
+    .btn {
+      background: #e53935;
+      color: white;
+      padding: 0.8rem 1.4rem;
+      border-radius: 8px;
+      text-decoration: none;
+      display: inline-block;
+      font-weight: bold;
+      margin-top: 1rem;
+    }
+    .other-products {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
     }
     .card {
       background: white;
-      display: flex;
-      border-radius: 12px;
+      border-radius: 8px;
       overflow: hidden;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      max-width: 700px;
-      width: 100%;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      text-align: center;
+      padding: 1rem;
     }
     .card img {
-      width: 45%;
-      object-fit: cover;
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 0.5rem;
     }
-    .info {
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      flex: 1;
+    .card h3 {
+      font-size: 1em;
+      margin-bottom: 0.5rem;
     }
-    .title {
-      font-size: 1.2rem;
-      margin-bottom: 10px;
-    }
-    .rating {
-      color: #ffa500;
-      margin-bottom: 15px;
-      font-size: 1rem;
-    }
-    .btn {
-      background-color: #ff4742;
+    .view-btn {
+      background: #0070f3;
       color: white;
-      padding: 10px 20px;
+      padding: 0.5rem 1rem;
       border-radius: 6px;
       text-decoration: none;
-      width: fit-content;
-      font-weight: bold;
-      transition: background 0.3s;
-    }
-    .btn:hover {
-      background-color: #d83a35;
+      display: inline-block;
     }
     @media (max-width: 768px) {
-      .card {
+      .main-product {
         flex-direction: column;
-      }
-      .card img {
-        width: 100%;
-        height: auto;
-      }
-      .info {
-        align-items: center;
-        text-align: center;
       }
     }
   </style>
 </head>
 <body>
-  <div class="card" id="app">Loading...</div>
+  <div id="app">Loading...</div>
 
   <script>
-    function generateRating() {
-      const rating = (Math.random() * 0.6 + 4.3).toFixed(1);
-      return `${rating} / 5 ⭐`;
+    const affTag = "cQ1BCFEo";
+    const workerURL = "https://lp.jevri-kurnia.workers.dev";
+    const otherProductIds = [
+      "1005006756125379",
+      "1005006800814480",
+      "1005007403628485",
+      "1005005104667727",
+      "1005007552718905",
+      "1005008119831611"
+    ];
+
+    function getRandomRating() {
+      const rating = (Math.random() * 0.5 + 4.5).toFixed(1); // antara 4.5–5.0
+      return `⭐ ${rating}/5`;
+    }
+
+    async function fetchProduct(id) {
+      const res = await fetch(`${workerURL}/?id=${id}`);
+      return res.json();
     }
 
     async function loadProduct() {
@@ -88,25 +120,37 @@
         return;
       }
 
-      const workerUrl = "https://lp.jevri-kurnia.workers.dev/?id=" + productId;
+      const mainProduct = await fetchProduct(productId);
 
-      try {
-        const res = await fetch(workerUrl);
-        const data = await res.json();
-        const rating = generateRating();
+      const others = await Promise.all(
+        otherProductIds.filter(id => id !== productId)
+          .slice(0, 4)
+          .map(id => fetchProduct(id))
+      );
 
-        document.getElementById("app").innerHTML = `
-          <img src="${data.image}" alt="Product Image">
-          <div class="info">
-            <div class="title">${data.title}</div>
-            <div class="rating">⭐ ${rating}</div>
-            <a href="${data.buy_url}" target="_blank" class="btn">🔗 Buy Now</a>
+      const html = `
+        <div class="main-product">
+          <img src="${mainProduct.image}" alt="Main Product">
+          <div class="main-info">
+            <h1>${mainProduct.title}</h1>
+            <div class="rating">${getRandomRating()}</div>
+            <a href="${mainProduct.buy_url}?aff_fcid=${affTag}" class="btn" target="_blank">Buy Now</a>
           </div>
-        `;
-      } catch (err) {
-        console.error(err);
-        document.getElementById("app").innerText = "Failed to load product.";
-      }
+        </div>
+
+        <h2>Related Deals</h2>
+        <div class="other-products">
+          ${others.map(p => `
+            <div class="card">
+              <img src="${p.image}" alt="${p.title}">
+              <h3>${p.title.slice(0, 50)}...</h3>
+              <a class="view-btn" href="?product=${p.id}">View</a>
+            </div>
+          `).join("")}
+        </div>
+      `;
+
+      document.getElementById("app").innerHTML = html;
     }
 
     loadProduct();
