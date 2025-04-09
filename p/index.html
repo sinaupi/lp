@@ -38,7 +38,8 @@
         const title = html.match(/<meta property="og:title" content="(.*?)"/);
         const imgMatch = html.match(/<meta property="og:image" content="(.*?)"/);
 
-        const image = imgMatch ? imgMatch[1].replace(/\\/, '') : '';
+        const title = titleMatch ? titleMatch[1] : 'Product';
+        const image = imgMatch ? imgMatch[1] : '';
 
         document.getElementById("app").innerHTML = `
           <h1>${title}</h1>
