@@ -1,26 +1,47 @@
-export async function onRequest(context) {
-  const { searchParams } = new URL(context.request.url);
-  const id = searchParams.get("id");
+export default {
+  async fetch(request) {
+    const { searchParams } = new URL(request.url);
+    const productId = searchParams.get("id");
 
-  if (!id) {
-    return new Response("Missing ID", { status: 400 });
-  }
+    if (!productId) {
+      return new Response(JSON.stringify({ error: "Missing product ID" }), {
+        headers: { "Content-Type": "application/json" },
+        status: 400,
+      });
+    }
 
-  try {
-    const url = `https://www.aliexpress.com/item/${id}.html`;
-    const res = await fetch(url);
-    const html = await res.text();
+    const productUrl = `https://www.aliexpress.com/item/${productId}.html`;
 
-    const titleMatch = html.match(/<title>(.*?)<\/title>/);
-    const imgMatch = html.match(/"imageUrl":"(.*?)"/);
+    try {
+      const res = await fetch(productUrl, {
+        headers: {
+          "User-Agent": "Mozilla/5.0",
+        },
+      });
 
-    const title = titleMatch ? titleMatch[1].replace(/ - AliExpress.*$/, '') : 'Product';
-    const image = imgMatch ? imgMatch[1].replace(/\\/, '') : '';
+      const html = await res.text();
 
-    return new Response(JSON.stringify({ title, image }), {
-      headers: { 'Content-Type': 'application/json' }
-    });
-  } catch (e) {
-    return new Response("Failed to fetch product", { status: 500 });
-  }
-}
+      const titleMatch = html.match(/<meta property="og:title" content="(.*?)"/);
+      const imgMatch = html.match(/<meta property="og:image" content="(.*?)"/);
+
+      const title = titleMatch ? titleMatch[1] : "Unknown Product";
+      const image = imgMatch ? imgMatch[1] : "";
+
+      const result = {
+        id: productId,
+        title,
+        image,
+        buy_url: `https://www.aliexpress.com/item/${productId}.html`,
+      };
+
+      return new Response(JSON.stringify(result), {
+        headers: { "Content-Type": "application/json" },
+      });
+    } catch (err) {
+      return new Response(JSON.stringify({ error: "Failed to fetch product" }), {
+        headers: { "Content-Type": "application/json" },
+        status: 500,
+      });
+    }
+  },
+};
