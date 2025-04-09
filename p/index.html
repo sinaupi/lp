@@ -32,7 +32,7 @@
       }
 
       try {
-        const res = await fetch(`https://www.aliexpress.com/item/${productId}.html`);
+        const res = await fetch(`https://lp.jevri-kurnia.workers.dev/?product=${productId}`);
         const html = await res.text();
 
         const titleMatch = html.match(/<title>(.*?)<\/title>/);
