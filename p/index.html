@@ -38,7 +38,7 @@
         const title = html.match(/<meta property="og:title" content="(.*?)"/);
         const imgMatch = html.match(/<meta property="og:image" content="(.*?)"/);
 
-        const title = titleMatch ? titleMatch[1] : 'Product';
+        const title = titleMatch ? titleMatch[1] '';
         const image = imgMatch ? imgMatch[1] : '';
 
         document.getElementById("app").innerHTML = `
