@@ -1,225 +1,255 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Penawaran Spesial</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Loading...</title>
   <style>
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
-      margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background-color: #f9f9f9;
+      background: #f5f5f5;
+      margin: 0;
       padding: 20px;
-      color: #333;
     }
 
-    .main-container {
+    .container {
       max-width: 1000px;
       margin: auto;
+    }
+
+    .main-card {
+      display: flex;
       background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      display: flex;
-      flex-wrap: wrap;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
       overflow: hidden;
+      margin-bottom: 30px;
     }
 
-    .main-image {
-      flex: 1 1 50%;
-      padding: 20px;
-      background: #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .main-card img {
+      width: 50%;
+      object-fit: cover;
+      height: auto;
     }
 
-    .main-image img {
-      max-width: 100%;
-      border-radius: 8px;
-    }
-
-    .main-info {
-      flex: 1 1 50%;
+    .info {
       padding: 30px;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      width: 50%;
     }
 
-    .main-info h1 {
-      font-size: 1.5em;
+    .info h1 {
+      font-size: 1.6em;
       margin-bottom: 10px;
     }
 
     .rating {
-      color: #FFD700;
-      font-size: 1.2em;
-      margin: 10px 0;
+      color: #f5a623;
+      margin-bottom: 12px;
+    }
+
+    .btn {
+      padding: 12px 20px;
+      background-color: #ff4742;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 1em;
+      width: fit-content;
+      margin-top: 20px;
+      cursor: pointer;
     }
 
     .countdown {
-      font-weight: bold;
-      color: #ff4742;
-      margin-bottom: 20px;
-    }
-
-    .buy-button {
-      background-color: #ff4742;
-      color: white;
-      padding: 14px 24px;
-      border: none;
-      font-size: 1em;
-      border-radius: 8px;
-      cursor: pointer;
-      text-decoration: none;
-      width: fit-content;
+      margin-top: 10px;
+      font-size: 0.9em;
+      color: #555;
     }
 
     .related {
-      margin-top: 30px;
+      margin-top: 40px;
     }
 
     .related h2 {
-      margin-bottom: 15px;
-      font-size: 1.2em;
+      margin-bottom: 20px;
     }
 
     .related-list {
       display: flex;
-      overflow-x: auto;
       gap: 20px;
+      overflow-x: auto;
+      padding-bottom: 10px;
     }
 
     .related-card {
       min-width: 150px;
       background: white;
       border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
       text-align: center;
       padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 250px;
+      position: relative;
+      transition: transform 0.2s ease;
+    }
+
+    .related-card:hover {
+      transform: translateY(-5px);
     }
 
     .related-card img {
       width: 100%;
+      height: 120px;
+      object-fit: cover;
       border-radius: 6px;
+    }
+
+    .related-card .title {
+      font-size: 0.8em;
+      margin-top: 8px;
+      line-height: 1.2em;
+      height: 2.4em;
+      overflow: hidden;
     }
 
     .related-card a {
       text-decoration: none;
-      display: inline-block;
-      margin-top: 10px;
-      font-size: 0.9em;
+      margin-top: auto;
+      font-size: 0.85em;
       color: #ff4742;
       font-weight: bold;
     }
 
+    .badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: #ff4742;
+      color: white;
+      font-size: 0.7em;
+      padding: 3px 6px;
+      border-radius: 4px;
+    }
+
     @media (max-width: 768px) {
-      .main-container {
+      .main-card {
         flex-direction: column;
       }
 
-      .main-image,
-      .main-info {
-        flex: 1 1 100%;
+      .main-card img,
+      .info {
+        width: 100%;
       }
     }
   </style>
 </head>
 <body>
-  <div class="main-container">
-    <div class="main-image">
-      <img id="productImage" src="" alt="Produk">
+  <div class="container">
+    <div id="main" class="main-card">
+      <img id="mainImage" src="" alt="Product Image">
+      <div class="info">
+        <h1 id="title">Loading...</h1>
+        <div class="rating" id="rating">⭐⭐⭐⭐½ (4.5/5)</div>
+        <div class="countdown" id="countdown">Ends in: --:--</div>
+        <a id="buyBtn" class="btn" href="#" target="_blank">🔗 Buy Now on AliExpress</a>
+      </div>
     </div>
-    <div class="main-info">
-      <h1 id="productTitle">Memuat...</h1>
-      <div class="rating">★★★★★ 4.5/5</div>
-      <div class="countdown" id="countdown">Berakhir dalam: --:--</div>
-      <a href="#" id="buyBtn" class="buy-button" target="_blank">🔗 Beli Sekarang di AliExpress</a>
-    </div>
-  </div>
 
-  <div class="related">
-    <h2>Produk Lainnya</h2>
-    <div class="related-list" id="relatedList">
-      <!-- Produk terkait akan dimuat di sini -->
+    <div class="related">
+      <h2>Related Products</h2>
+      <div class="related-list" id="relatedList"></div>
     </div>
   </div>
 
   <script>
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get("product");
-
+    const params = new URLSearchParams(window.location.search);
+    const productId = params.get("product") || "1005007292854280";
+    const affTag = "cQ1BCFEo";
     const workerBase = "https://lp.jevri-kurnia.workers.dev/?id=";
 
-    const relatedIds = [
+    function cleanTitle(title) {
+      return title.replace(/\s*[-|【(（]?AliExpress.*$/i, "").trim();
+    }
+
+    async function loadProduct(id) {
+      const res = await fetch(workerBase + id);
+      const data = await res.json();
+
+      const titleClean = cleanTitle(data.title);
+      document.title = titleClean;
+
+      document.getElementById("mainImage").src = data.image;
+      document.getElementById("title").innerText = titleClean;
+      document.getElementById("buyBtn").href = data.buy_url + "?aff_fcid=" + affTag;
+    }
+
+    function loadRating() {
+      const rating = (4 + Math.random()).toFixed(1);
+      document.getElementById("rating").innerText = "⭐".repeat(~~rating) + (rating % 1 >= 0.5 ? "½" : "") + ` (${rating}/5)`;
+    }
+
+    function startCountdown(durationMinutes) {
+      const endTime = Date.now() + durationMinutes * 60 * 1000;
+      const countdownEl = document.getElementById("countdown");
+
+      function update() {
+        const now = Date.now();
+        const diff = endTime - now;
+
+        if (diff <= 0) {
+          countdownEl.innerText = "Hurry! Almost gone!";
+          return;
+        }
+
+        const mins = Math.floor(diff / 60000);
+        const secs = Math.floor((diff % 60000) / 1000);
+        countdownEl.innerText = `Ends in: ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        requestAnimationFrame(update);
+      }
+
+      update();
+    }
+
+    async function loadRelated(ids) {
+      for (const id of ids) {
+        try {
+          const res = await fetch(workerBase + id);
+          const data = await res.json();
+
+          const card = document.createElement("div");
+          card.className = "related-card";
+          card.innerHTML = `
+            <div class="badge">New</div>
+            <img src="${data.image}" alt="">
+            <div class="title">${cleanTitle(data.title)}</div>
+            <a href="?product=${id}">Lihat</a>
+          `;
+          document.getElementById("relatedList").appendChild(card);
+        } catch (e) {
+          console.warn("Failed to load related:", id);
+        }
+      }
+    }
+
+    // Run all
+    loadProduct(productId);
+    loadRating();
+    startCountdown(60);
+    loadRelated([
       "1005006756125379",
       "1005006800814480",
       "1005007403628485",
       "1005005104667727",
       "1005007552718905",
       "1005008119831611"
-    ];
-
-    const affTag = "cQ1BCFEo";
-
-    function cleanTitle(title) {
-      return title.replace(/\s*-+\s*AliExpress.*$/i, "").trim();
-    }
-
-    async function loadProduct(id, isMain = false) {
-      try {
-        const res = await fetch(workerBase + id);
-        const data = await res.json();
-
-        if (isMain) {
-          document.getElementById("productImage").src = data.image;
-          document.getElementById("productTitle").innerText = cleanTitle(data.title);
-          document.getElementById("buyBtn").href = data.buy_url + "?aff_fcid=" + affTag;
-        } else {
-          const relatedDiv = document.createElement("div");
-          relatedDiv.className = "related-card";
-          relatedDiv.innerHTML = `
-            <img src="${data.image}" alt="">
-            <div style="font-size: 0.8em; margin-top: 8px;">${cleanTitle(data.title).slice(0, 40)}...</div>
-            <a href="?product=${id}">Lihat</a>
-          `;
-          document.getElementById("relatedList").appendChild(relatedDiv);
-        }
-      } catch (err) {
-        console.error("Gagal memuat produk:", id, err);
-      }
-    }
-
-    function startCountdown(minutes) {
-      const countdownEl = document.getElementById("countdown");
-      let seconds = minutes * 60;
-
-      const interval = setInterval(() => {
-        const m = Math.floor(seconds / 60);
-        const s = seconds % 60;
-        countdownEl.innerText = `Berakhir dalam: ${m}m ${s}s`;
-        if (--seconds < 0) {
-          clearInterval(interval);
-          countdownEl.innerText = "Promo telah berakhir!";
-        }
-      }, 1000);
-    }
-
-    if (productId) {
-      loadProduct(productId, true);
-    } else {
-      document.getElementById("productTitle").innerText = "Produk tidak ditemukan.";
-    }
-
-    // Muat produk terkait
-    relatedIds.filter(id => id !== productId).forEach(id => loadProduct(id));
-
-    // Mulai timer 60 menit
-    startCountdown(60);
+    ]);
   </script>
 </body>
 </html>
