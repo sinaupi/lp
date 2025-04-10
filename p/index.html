@@ -2,105 +2,149 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Best Deals</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Loading...</title>
   <style>
+    * { box-sizing: border-box; }
+
     body {
-      margin: 0;
       font-family: 'Segoe UI', sans-serif;
-      background: #f9f9f9;
-      color: #333;
-    }
-    .container {
-      max-width: 1200px;
-      margin: auto;
+      background: #f5f5f5;
+      margin: 0;
       padding: 20px;
     }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+    }
+
     .main-card {
       display: flex;
-      flex-wrap: wrap;
-      background: #fff;
-      border-radius: 10px;
-      overflow: hidden;
+      background: white;
+      border-radius: 12px;
       box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
       margin-bottom: 30px;
     }
+
     .main-card img {
-      width: 100%;
-      max-width: 500px;
+      width: 50%;
       object-fit: cover;
-      flex: 1;
+      height: auto;
     }
-    .main-info {
+
+    .info {
       padding: 30px;
-      flex: 1;
       display: flex;
       flex-direction: column;
       justify-content: center;
+      width: 50%;
     }
-    .main-info h1 {
-      font-size: 1.8em;
+
+    .info h1 {
+      font-size: 1.6em;
       margin-bottom: 10px;
     }
-    .stars, .countdown {
-      margin: 10px 0;
-      font-size: 1em;
-      color: #777;
+
+    .rating {
+      color: #f5a623;
+      margin-bottom: 12px;
     }
+
     .btn {
-      padding: 15px;
-      background: #ff4742;
+      padding: 12px 20px;
+      background-color: #ff4742;
       color: white;
       text-decoration: none;
       border-radius: 6px;
-      font-weight: bold;
-      text-align: center;
+      font-size: 1em;
       width: fit-content;
       margin-top: 20px;
+      cursor: pointer;
     }
 
-    .related-section {
+    .countdown {
+      margin-top: 10px;
+      font-size: 0.9em;
+      color: #555;
+    }
+
+    .related {
       margin-top: 40px;
     }
-    .related-section h2 {
+
+    .related h2 {
       margin-bottom: 20px;
     }
+
     .related-list {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      display: flex;
       gap: 20px;
+      overflow-x: auto;
+      padding-bottom: 10px;
     }
+
     .related-card {
+      min-width: 150px;
       background: white;
       border-radius: 8px;
-      overflow: hidden;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
       text-align: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 250px;
+      position: relative;
+      transition: transform 0.2s ease;
     }
+
+    .related-card:hover {
+      transform: translateY(-5px);
+    }
+
     .related-card img {
       width: 100%;
-      height: 150px;
+      height: 120px;
       object-fit: cover;
+      border-radius: 6px;
     }
-    .related-card h3 {
-      font-size: 0.95em;
-      padding: 10px;
-      height: 60px;
+
+    .related-card .title {
+      font-size: 0.8em;
+      margin-top: 8px;
+      line-height: 1.2em;
+      height: 2.4em;
       overflow: hidden;
     }
+
     .related-card a {
-      display: block;
-      background: #007aff;
-      color: white;
-      padding: 10px;
       text-decoration: none;
+      margin-top: auto;
+      font-size: 0.85em;
+      color: #ff4742;
+      font-weight: bold;
+    }
+
+    .badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: #ff4742;
+      color: white;
+      font-size: 0.7em;
+      padding: 3px 6px;
+      border-radius: 4px;
     }
 
     @media (max-width: 768px) {
       .main-card {
         flex-direction: column;
       }
-      .main-card img, .main-info {
+
+      .main-card img,
+      .info {
         width: 100%;
       }
     }
@@ -108,82 +152,113 @@
 </head>
 <body>
   <div class="container">
-    <div class="main-card">
-      <img id="product-image" src="" alt="Main Product" />
-      <div class="main-info">
-        <h1 id="product-title">Loading...</h1>
-        <div class="stars" id="rating">⭐ 4.5/5</div>
-        <div class="countdown">Ends in: <span id="timer">60:00</span></div>
-        <a href="#" class="btn" id="buy-now" target="_blank">Buy Now</a>
+    <div id="main" class="main-card">
+      <img id="mainImage" src="" alt="Product Image">
+      <div class="info">
+        <h1 id="title">Loading...</h1>
+        <div class="rating" id="rating">⭐⭐⭐⭐½ (4.5/5)</div>
+        <div class="countdown" id="countdown">Ends in: --:--</div>
+        <a id="buyBtn" class="btn" href="#" target="_blank">🔗 Buy Now on AliExpress</a>
       </div>
     </div>
 
-    <div class="related-section">
-      <h2>Related Deals</h2>
-      <div class="related-list" id="related-products"></div>
+    <div class="related">
+      <h2>Related Products</h2>
+      <div class="related-list" id="relatedList"></div>
     </div>
   </div>
 
   <script>
     const params = new URLSearchParams(window.location.search);
-    const productId = params.get("product");
-    const tag = params.get("tag");
-    const timerEl = document.getElementById("timer");
+    const productId = params.get("product") || "1005007292854280";
+    const affTag = "_oB48BJb";
+    const workerBase = "https://lp.jevri-kurnia.workers.dev/?id=";
 
-    function startCountdown(minutes) {
-      let time = minutes * 60;
-      const interval = setInterval(() => {
-        const min = Math.floor(time / 60);
-        const sec = String(time % 60).padStart(2, "0");
-        timerEl.textContent = `${min}:${sec}`;
-        if (--time < 0) clearInterval(interval);
-      }, 1000);
+    function cleanTitle(title) {
+      return title.replace(/\s*[-|【(（]?AliExpress.*$/i, "").trim();
     }
 
-    function sanitizeTitle(title) {
-      return title.split(" - ")[0]; // hapus "- AliExpress" dan setelahnya
+    function shortenTitle(title, maxLength = 50) {
+      return title.length > maxLength ? title.slice(0, maxLength).trim() + "..." : title;
     }
 
-    async function loadMainProduct() {
-      if (!productId) return;
-
-      const workerUrl = "https://lp.jevri-kurnia.workers.dev/?id=" + productId;
-      const res = await fetch(workerUrl);
+    async function loadProduct(id) {
+      const res = await fetch(workerBase + id);
       const data = await res.json();
 
-      document.title = sanitizeTitle(data.title);
-      document.getElementById("product-title").innerText = sanitizeTitle(data.title);
-      document.getElementById("product-image").src = data.image;
+      const titleClean = cleanTitle(data.title);
+      document.title = titleClean;
 
-      const buyUrl = tag ? `https://s.click.aliexpress.com/e/${tag}` : "#";
-      const buyBtn = document.getElementById("buy-now");
-      if (tag) buyBtn.href = buyUrl;
-      else buyBtn.style.display = "none";
+      document.getElementById("mainImage").src = data.image;
+      document.getElementById("title").innerText = titleClean;
+
+      const fullUrl = data.buy_url.includes("?") ? data.buy_url + "&tag=" + affTag : data.buy_url + "?tag=" + affTag;
+      document.getElementById("buyBtn").href = fullUrl;
     }
 
-    async function loadRelatedProducts() {
-      const res = await fetch("/data.csv");
-      const text = await res.text();
-      const rows = text.trim().split("\n").slice(1); // skip header
-      const shuffled = rows.sort(() => 0.5 - Math.random()).slice(0, 6);
-      
-      const container = document.getElementById("related-products");
-      shuffled.forEach(row => {
-        const [ItemId, Title,, , , Promote_Url, Image1] = row.split(",");
-        const card = document.createElement("div");
-        card.className = "related-card";
-        card.innerHTML = `
-          <img src="${Image1}" alt="Related">
-          <h3>${Title}</h3>
-          <a href="${Promote_Url}" target="_blank">Lihat</a>
-        `;
-        container.appendChild(card);
-      });
+    function loadRating() {
+      const rating = (4 + Math.random()).toFixed(1);
+      document.getElementById("rating").innerText = "⭐".repeat(~~rating) + (rating % 1 >= 0.5 ? "½" : "") + ` (${rating}/5)`;
     }
 
-    loadMainProduct();
-    loadRelatedProducts();
+    function startCountdown(durationMinutes) {
+      const endTime = Date.now() + durationMinutes * 60 * 1000;
+      const countdownEl = document.getElementById("countdown");
+
+      function update() {
+        const now = Date.now();
+        const diff = endTime - now;
+
+        if (diff <= 0) {
+          countdownEl.innerText = "Hurry! Almost gone!";
+          return;
+        }
+
+        const mins = Math.floor(diff / 60000);
+        const secs = Math.floor((diff % 60000) / 1000);
+        countdownEl.innerText = `Ends in: ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        requestAnimationFrame(update);
+      }
+
+      update();
+    }
+
+    async function loadRelated(ids) {
+      for (const id of ids) {
+        try {
+          const res = await fetch(workerBase + id);
+          const data = await res.json();
+
+          const card = document.createElement("div");
+          card.className = "related-card";
+          card.innerHTML = `
+            <div class="badge">New</div>
+            <img src="${data.image}" alt="">
+            <div class="title">${shortenTitle(cleanTitle(data.title))}</div>
+            <a href="${data.buy_url}" target="_blank">Lihat Produk</a>
+          `;
+          document.getElementById("relatedList").appendChild(card);
+        } catch (e) {
+          console.warn("Failed to load related:", id);
+        }
+      }
+    }
+
+    // Static related products (ubah ini dengan random fetch CSV jika backend sudah siap)
+    const relatedIds = [
+      "1005006756125379",
+      "1005006800814480",
+      "1005007403628485",
+      "1005005104667727",
+      "1005007552718905",
+      "1005008119831611"
+    ];
+
+    // Run all
+    loadProduct(productId);
+    loadRating();
     startCountdown(60);
+    loadRelated(relatedIds);
   </script>
 </body>
 </html>
