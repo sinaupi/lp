@@ -172,7 +172,7 @@
     const params = new URLSearchParams(window.location.search);
     const productId = params.get("product") || "1005007292854280";
     const affTag = "_oB48BJb";
-    const workerBase = "https://lp.jevri-kurnia.workers.dev/?id=";
+    const workerBase = "https://lp.jevri-kurnia.workers.dev";
 
     function cleanTitle(title) {
       return title.replace(/\s*[-|【(（]?AliExpress.*$/i, "").trim();
@@ -183,7 +183,7 @@
     }
 
     async function loadProduct(id) {
-      const res = await fetch(workerBase + id);
+      const res = await fetch(workerBase + "?id=" + id);
       const data = await res.json();
 
       const titleClean = cleanTitle(data.title);
@@ -223,42 +223,43 @@
       update();
     }
 
-    async function loadRelated(ids) {
-      for (const id of ids) {
-        try {
-          const res = await fetch(workerBase + id);
-          const data = await res.json();
+    async function loadRelatedFromCSV() {
+      try {
+        const res = await fetch(workerBase + "?csv");
+        const csvText = await res.text();
+        const rows = csvText.trim().split("\n").slice(1);
+        const products = rows.map(row => {
+          const [id, title, image, promoteUrl] = row.split(",");
+          return { id, title, image, promoteUrl };
+        });
 
+        const filtered = products.filter(p => p.id !== productId);
+        const randomSix = filtered.sort(() => Math.random() - 0.5).slice(0, 6);
+
+        const list = document.getElementById("relatedList");
+        list.innerHTML = "";
+
+        for (const p of randomSix) {
           const card = document.createElement("div");
           card.className = "related-card";
           card.innerHTML = `
             <div class="badge">New</div>
-            <img src="${data.image}" alt="">
-            <div class="title">${shortenTitle(cleanTitle(data.title))}</div>
-            <a href="${data.buy_url}" target="_blank">Lihat Produk</a>
+            <img src="${p.image}" alt="">
+            <div class="title">${shortenTitle(cleanTitle(p.title))}</div>
+            <a href="${p.promoteUrl}" target="_blank">Lihat Produk</a>
           `;
-          document.getElementById("relatedList").appendChild(card);
-        } catch (e) {
-          console.warn("Failed to load related:", id);
+          list.appendChild(card);
         }
+      } catch (e) {
+        console.error("Gagal load CSV:", e);
       }
     }
-
-    // Static related products (ubah ini dengan random fetch CSV jika backend sudah siap)
-    const relatedIds = [
-      "1005006756125379",
-      "1005006800814480",
-      "1005007403628485",
-      "1005005104667727",
-      "1005007552718905",
-      "1005008119831611"
-    ];
 
     // Run all
     loadProduct(productId);
     loadRating();
     startCountdown(60);
-    loadRelated(relatedIds);
+    loadRelatedFromCSV();
   </script>
 </body>
 </html>
