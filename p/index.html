@@ -1,273 +1,177 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Loading...</title>
+  <meta charset="UTF-8">
+  <title>Landing Produk</title>
   <style>
-    * { box-sizing: border-box; }
-
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #f5f5f5;
-      margin: 0;
-      padding: 20px;
+      font-family: Arial, sans-serif;
+      margin: 20px;
+      background: #f7f7f7;
     }
-
-    .container {
-      max-width: 1000px;
+    .product {
+      max-width: 900px;
       margin: auto;
-    }
-
-    .main-card {
-      display: flex;
       background: white;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-      overflow: hidden;
-      margin-bottom: 30px;
+      padding: 20px;
+      border-radius: 10px;
     }
-
-    .main-card img {
-      width: 50%;
-      object-fit: cover;
-      height: auto;
+    .product img {
+      max-width: 100%;
+      border-radius: 5px;
     }
-
-    .info {
-      padding: 30px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      width: 50%;
+    .product h1 {
+      font-size: 24px;
+      margin: 10px 0;
     }
-
-    .info h1 {
-      font-size: 1.6em;
-      margin-bottom: 10px;
-    }
-
-    .rating {
-      color: #f5a623;
-      margin-bottom: 12px;
-    }
-
-    .btn {
-      padding: 12px 20px;
-      background-color: #ff4742;
-      color: white;
-      text-decoration: none;
-      border-radius: 6px;
-      font-size: 1em;
-      width: fit-content;
-      margin-top: 20px;
-      cursor: pointer;
-    }
-
-    .countdown {
-      margin-top: 10px;
-      font-size: 0.9em;
-      color: #555;
-    }
-
-    .related {
-      margin-top: 40px;
-    }
-
-    .related h2 {
-      margin-bottom: 20px;
-    }
-
-    .related-list {
-      display: flex;
-      gap: 20px;
-      overflow-x: auto;
-      padding-bottom: 10px;
-    }
-
-    .related-card {
-      min-width: 150px;
-      background: white;
-      border-radius: 8px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
-      text-align: center;
-      padding: 10px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 250px;
-      position: relative;
-      transition: transform 0.2s ease;
-    }
-
-    .related-card:hover {
-      transform: translateY(-5px);
-    }
-
-    .related-card img {
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 6px;
-    }
-
-    .related-card .title {
-      font-size: 0.8em;
-      margin-top: 8px;
-      line-height: 1.2em;
-      height: 2.4em;
-      overflow: hidden;
-    }
-
-    .related-card a {
-      text-decoration: none;
-      margin-top: auto;
-      font-size: 0.85em;
-      color: #ff4742;
+    .product .price {
+      font-size: 20px;
+      color: #e53935;
       font-weight: bold;
     }
-
-    .badge {
-      position: absolute;
-      top: 8px;
-      left: 8px;
-      background: #ff4742;
-      color: white;
-      font-size: 0.7em;
-      padding: 3px 6px;
-      border-radius: 4px;
+    .product .rating {
+      color: #fbc02d;
     }
-
-    @media (max-width: 768px) {
-      .main-card {
-        flex-direction: column;
-      }
-
-      .main-card img,
-      .info {
-        width: 100%;
-      }
+    .product .discount {
+      font-size: 14px;
+      color: green;
+      margin-bottom: 15px;
+    }
+    .buy-button {
+      background: #e53935;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      margin-top: 10px;
+    }
+    #relatedSection {
+      margin-top: 50px;
+    }
+    #relatedList {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+    }
+    .related-card {
+      width: 180px;
+      background: white;
+      border: 1px solid #ddd;
+      padding: 10px;
+      border-radius: 8px;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .related-card img {
+      width: 100%;
+      height: 140px;
+      object-fit: cover;
+      border-radius: 5px;
+    }
+    .related-card .title {
+      margin: 10px 0;
+      font-weight: bold;
+      font-size: 14px;
+    }
+    .related-card a {
+      color: white;
+      background: #ff4747;
+      padding: 6px 10px;
+      text-decoration: none;
+      border-radius: 4px;
+      display: inline-block;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div id="main" class="main-card">
-      <img id="mainImage" src="" alt="Product Image">
-      <div class="info">
-        <h1 id="title">Loading...</h1>
-        <div class="rating" id="rating">⭐⭐⭐⭐½ (4.5/5)</div>
-        <div class="countdown" id="countdown">Ends in: --:--</div>
-        <a id="buyBtn" class="btn" href="#" target="_blank">🔗 Buy Now on AliExpress</a>
-      </div>
-    </div>
 
-    <div class="related">
-      <h2>Related Products</h2>
-      <div class="related-list" id="relatedList"></div>
-    </div>
-  </div>
+<div class="product" id="productInfo">
+  <img id="mainImage" src="" alt="Product Image">
+  <h1 id="title">Memuat...</h1>
+  <div class="price" id="price"></div>
+  <div class="rating" id="rating"></div>
+  <div class="discount" id="discount"></div>
+  <a class="buy-button" id="buyBtn" href="#" target="_blank">Beli Sekarang</a>
+</div>
 
-  <script>
-    const params = new URLSearchParams(window.location.search);
-    const productId = params.get("product") || "1005007292854280";
-    const affTag = "_oB48BJb";
-    const workerBase = "https://lp.jevri-kurnia.workers.dev";
+<div id="relatedSection">
+  <h2>Produk Terkait</h2>
+  <div id="relatedList"></div>
+</div>
 
-    function cleanTitle(title) {
-      return title.replace(/\s*[-|【(（]?AliExpress.*$/i, "").trim();
-    }
+<script>
+const productId = "1005006826121858"; // Ganti dengan ID produk aktif
+const workerBase = "https://rebrand.workers.dev"; // Endpoint CSV kamu
 
-    function shortenTitle(title, maxLength = 50) {
-      return title.length > maxLength ? title.slice(0, maxLength).trim() + "..." : title;
-    }
+function shortenTitle(title) {
+  return title.length > 55 ? title.slice(0, 55) + "..." : title;
+}
 
-    async function loadProduct(id) {
-      const res = await fetch(workerBase + "?id=" + id);
-      const data = await res.json();
+function cleanTitle(title) {
+  return title.replace(/[^a-zA-Z0-9\s]/g, "").trim();
+}
 
-      const titleClean = cleanTitle(data.title);
-      document.title = titleClean;
+async function loadProductAndRelated() {
+  try {
+    const res = await fetch(workerBase + "?csv");
+    const csvText = await res.text();
+    const rows = csvText.trim().split("\n");
 
-      document.getElementById("mainImage").src = data.image;
-      document.getElementById("title").innerText = titleClean;
-
-      const fullUrl = data.buy_url.includes("?") ? data.buy_url + "&tag=" + affTag : data.buy_url + "?tag=" + affTag;
-      document.getElementById("buyBtn").href = fullUrl;
-    }
-
-    function loadRating() {
-      const rating = (4 + Math.random()).toFixed(1);
-      document.getElementById("rating").innerText = "⭐".repeat(~~rating) + (rating % 1 >= 0.5 ? "½" : "") + ` (${rating}/5)`;
-    }
-
-    function startCountdown(durationMinutes) {
-      const endTime = Date.now() + durationMinutes * 60 * 1000;
-      const countdownEl = document.getElementById("countdown");
-
-      function update() {
-        const now = Date.now();
-        const diff = endTime - now;
-
-        if (diff <= 0) {
-          countdownEl.innerText = "Hurry! Almost gone!";
-          return;
-        }
-
-        const mins = Math.floor(diff / 60000);
-        const secs = Math.floor((diff % 60000) / 1000);
-        countdownEl.innerText = `Ends in: ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-        requestAnimationFrame(update);
-      }
-
-      update();
-    }
-
-      async function loadRelatedFromCSV() {
-    try {
-      const res = await fetch(workerBase + "?csv");
-      const csvText = await res.text();
-      const rows = csvText.trim().split("\n");
-      const header = rows.shift().split(",");
-      const products = rows.map(row => {
-        const cols = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g); // safer CSV split
-        const data = {};
-        header.forEach((key, i) => {
-          data[key.trim()] = cols[i]?.replace(/^"|"$/g, "").trim() || "";
-        });
-        return data;
+    const header = rows.shift().split(",");
+    const products = rows.map(row => {
+      const cols = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+      const data = {};
+      header.forEach((key, i) => {
+        data[key.trim()] = cols[i]?.replace(/^"|"$/g, "").trim() || "";
       });
-  
-      const filtered = products.filter(p => p.ItemId !== productId && p.Promote_Url && p.Image1);
-      const randomSix = filtered.sort(() => Math.random() - 0.5).slice(0, 6);
-  
-      const list = document.getElementById("relatedList");
-      list.innerHTML = "";
-  
-      for (const p of randomSix) {
-        const card = document.createElement("div");
-        card.className = "related-card";
-        card.innerHTML = `
-          <div class="badge">New</div>
-          <img src="${p.Image1}" alt="">
-          <div class="title">${shortenTitle(cleanTitle(p.Title))}</div>
-          <a href="${p.Promote_Url}" target="_blank">Lihat Produk</a>
-        `;
-        list.appendChild(card);
-      }
-    } catch (e) {
-      console.error("Gagal load related:", e);
-      document.getElementById("relatedList").innerText = "Gagal load related.";
+      return data;
+    });
+
+    const product = products.find(p => p.ItemId === productId);
+    if (!product) {
+      document.getElementById("productInfo").innerHTML = "<p>Produk tidak ditemukan.</p>";
+      return;
     }
+
+    // Tampilkan produk utama
+    document.getElementById("mainImage").src = product.Image1;
+    document.getElementById("title").textContent = product.Title;
+    document.getElementById("price").textContent = product.Price;
+    document.getElementById("rating").textContent = "⭐ " + product.Star_Rating;
+    document.getElementById("discount").textContent = "Diskon: " + product.Discount + "%";
+    document.getElementById("buyBtn").href = product.Promote_Url;
+
+    // Produk terkait
+    const related = products.filter(p => 
+      p.ItemId !== productId && p.Promote_Url && p.Image1
+    );
+    const randomSix = related.sort(() => Math.random() - 0.5).slice(0, 6);
+    const list = document.getElementById("relatedList");
+    list.innerHTML = "";
+
+    for (const p of randomSix) {
+      const card = document.createElement("div");
+      card.className = "related-card";
+      card.innerHTML = `
+        <img src="${p.Image1}" alt="Product">
+        <div class="title">${shortenTitle(cleanTitle(p.Title))}</div>
+        <a href="${p.Promote_Url}" target="_blank">Lihat Produk</a>
+      `;
+      list.appendChild(card);
+    }
+
+  } catch (err) {
+    console.error("Gagal memuat data:", err);
+    document.getElementById("productInfo").innerHTML = "<p>Gagal memuat produk.</p>";
   }
+}
 
-    }
+loadProductAndRelated();
+</script>
 
-    // Run all
-    loadProduct(productId);
-    loadRating();
-    startCountdown(60);
-    loadRelatedFromCSV();
-  </script>
 </body>
 </html>
