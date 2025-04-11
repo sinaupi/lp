@@ -1,3 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Loading...</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f5f5f5;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .main-card {
+      display: flex;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      overflow: hidden;
+      margin-bottom: 30px;
+    }
+
+    .main-card img {
+      width: 50%;
+      object-fit: cover;
+      height: auto;
+    }
+
+    .info {
+      padding: 30px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      width: 50%;
+    }
+
+    .info h1 {
+      font-size: 1.6em;
+      margin-bottom: 10px;
+    }
+
+    .rating {
+      color: #f5a623;
+      margin-bottom: 12px;
+    }
+
+    .btn {
+      padding: 12px 20px;
+      background-color: #ff4742;
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 1em;
+      width: fit-content;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+
+    .countdown {
+      margin-top: 10px;
+      font-size: 0.9em;
+      color: #555;
+    }
+
+    .related {
+      margin-top: 40px;
+    }
+
+    .related h2 {
+      margin-bottom: 20px;
+    }
+
+    .related-list {
+      display: flex;
+      gap: 20px;
+      overflow-x: auto;
+      padding-bottom: 10px;
+    }
+
+    .related-card {
+      min-width: 150px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+      text-align: center;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 250px;
+      position: relative;
+      transition: transform 0.2s ease;
+    }
+
+    .related-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .related-card img {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 6px;
+    }
+
+    .related-card .title {
+      font-size: 0.8em;
+      margin-top: 8px;
+      line-height: 1.2em;
+      height: 2.4em;
+      overflow: hidden;
+    }
+
+    .related-card a {
+      text-decoration: none;
+      margin-top: auto;
+      font-size: 0.85em;
+      color: #ff4742;
+      font-weight: bold;
+    }
+
+    .badge {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: #ff4742;
+      color: white;
+      font-size: 0.7em;
+      padding: 3px 6px;
+      border-radius: 4px;
+    }
+
+    @media (max-width: 768px) {
+      .main-card {
+        flex-direction: column;
+      }
+
+      .main-card img,
+      .info {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="main" class="main-card">
+      <img id="mainImage" src="" alt="Product Image">
+      <div class="info">
+        <h1 id="title">Loading...</h1>
+        <div class="rating" id="rating">⭐⭐⭐⭐½ (4.5/5)</div>
+        <div class="countdown" id="countdown">Ends in: --:--</div>
+        <a id="buyBtn" class="btn" href="#" target="_blank">🔗 Buy Now on AliExpress</a>
+      </div>
+    </div>
+
+    <div class="related">
+      <h2>Related Products</h2>
+      <div class="related-list" id="relatedList"></div>
+    </div>
+  </div>
 <script>
     const params = new URLSearchParams(window.location.search);
     const productId = params.get("product") || "1005007292854280";
@@ -102,4 +271,6 @@
     loadRating();
     startCountdown(60);
     loadRelated(); // Changed to call without parameters
-  </script>
+  </script>>
+</body>
+</html>
