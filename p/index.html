@@ -6,19 +6,16 @@
   <title>Loading...</title>
   <style>
     * { box-sizing: border-box; }
-
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #f5f5f5;
       margin: 0;
       padding: 20px;
     }
-
     .container {
       max-width: 1000px;
       margin: auto;
     }
-
     .main-card {
       display: flex;
       background: white;
@@ -27,13 +24,11 @@
       overflow: hidden;
       margin-bottom: 30px;
     }
-
     .main-card img {
       width: 50%;
       object-fit: cover;
       height: auto;
     }
-
     .info {
       padding: 30px;
       display: flex;
@@ -41,17 +36,14 @@
       justify-content: center;
       width: 50%;
     }
-
     .info h1 {
       font-size: 1.6em;
       margin-bottom: 10px;
     }
-
     .rating {
       color: #f5a623;
       margin-bottom: 12px;
     }
-
     .btn {
       padding: 12px 20px;
       background-color: #ff4742;
@@ -63,28 +55,23 @@
       margin-top: 20px;
       cursor: pointer;
     }
-
     .countdown {
       margin-top: 10px;
       font-size: 0.9em;
       color: #555;
     }
-
     .related {
       margin-top: 40px;
     }
-
     .related h2 {
       margin-bottom: 20px;
     }
-
     .related-list {
       display: flex;
       gap: 20px;
       overflow-x: auto;
       padding-bottom: 10px;
     }
-
     .related-card {
       min-width: 150px;
       background: white;
@@ -99,18 +86,15 @@
       position: relative;
       transition: transform 0.2s ease;
     }
-
     .related-card:hover {
       transform: translateY(-5px);
     }
-
     .related-card img {
       width: 100%;
       height: 120px;
       object-fit: cover;
       border-radius: 6px;
     }
-
     .related-card .title {
       font-size: 0.8em;
       margin-top: 8px;
@@ -118,7 +102,6 @@
       height: 2.4em;
       overflow: hidden;
     }
-
     .related-card a {
       text-decoration: none;
       margin-top: auto;
@@ -126,7 +109,6 @@
       color: #ff4742;
       font-weight: bold;
     }
-
     .badge {
       position: absolute;
       top: 8px;
@@ -137,12 +119,10 @@
       padding: 3px 6px;
       border-radius: 4px;
     }
-
     @media (max-width: 768px) {
       .main-card {
         flex-direction: column;
       }
-
       .main-card img,
       .info {
         width: 100%;
@@ -161,7 +141,6 @@
         <a id="buyBtn" class="btn" href="#" target="_blank">🔗 Buy Now on AliExpress</a>
       </div>
     </div>
-
     <div class="related">
       <h2>Related Products</h2>
       <div class="related-list" id="relatedList"></div>
@@ -171,102 +150,87 @@
   <script>
     const params = new URLSearchParams(window.location.search);
     const productId = params.get("product") || "1005007292854280";
-    const affTag = "cQ1BCFEo";
+    const affTag = params.get("afftag") || "cQ1BCFEo"; // <-- ambil afftag dari URL
     const workerBase = "https://lp.jevri-kurnia.workers.dev/?id=";
 
     function cleanTitle(title) {
       return title.replace(/\s*[-|【(（]?AliExpress.*$/i, "").trim();
     }
 
-    function truncateTitle(title, maxLength = 50) {
-      return title.length > maxLength ? title.slice(0, maxLength - 3).trim() + "..." : title;
-    }
-
-    async function translateToEnglish(text) {
-      try {
-        const res = await fetch("https://libretranslate.de/translate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            q: text,
-            source: "auto",
-            target: "en",
-            format: "text"
-          })
-        });
-
-        const data = await res.json();
-        return data.translatedText || text;
-      } catch (e) {
-        console.warn("Translation failed:", e);
-        return text;
-      }
-    }
-
-    async function processTitle(title) {
-      const cleaned = cleanTitle(title);
-      const isEnglish = /^[\x00-\x7F]*$/.test(cleaned);
-      const finalTitle = isEnglish ? cleaned : await translateToEnglish(cleaned);
-      return truncateTitle(finalTitle);
-    }
-
     async function loadProduct(id) {
-      try {
-        const res = await fetch(workerBase + id);
-        const data = await res.json();
+      const res = await fetch(workerBase + id);
+      const data = await res.json();
 
-        const titleProcessed = await processTitle(data.title);
-        document.title = titleProcessed;
-        document.getElementById("title").textContent = titleProcessed;
-        document.getElementById("mainImage").src = data.image || "";
-        document.getElementById("buyBtn").href = data.url + "?aff_fcid=" + affTag;
-        document.getElementById("rating").textContent = `⭐ ${data.rating || '4.5'} / 5`;
-        startCountdown(48 * 60 * 60); // 48 jam
-        loadRelated(data.related || []);
-      } catch (e) {
-        console.error("Product load error:", e);
-        document.getElementById("title").textContent = "Product not found.";
-      }
+      const titleClean = cleanTitle(data.title);
+      document.title = titleClean;
+
+      document.getElementById("mainImage").src = data.image;
+      document.getElementById("title").innerText = titleClean;
+
+      // 🔥 Ganti URL tombol Buy dengan link dari afftag langsung
+      document.getElementById("buyBtn").href = "https://s.click.aliexpress.com/e/" + affTag;
     }
 
-    function startCountdown(seconds) {
+    function loadRating() {
+      const rating = (4 + Math.random()).toFixed(1);
+      document.getElementById("rating").innerText = "⭐".repeat(~~rating) + (rating % 1 >= 0.5 ? "½" : "") + ` (${rating}/5)`;
+    }
+
+    function startCountdown(durationMinutes) {
+      const endTime = Date.now() + durationMinutes * 60 * 1000;
       const countdownEl = document.getElementById("countdown");
 
       function update() {
-        const h = Math.floor(seconds / 3600);
-        const m = Math.floor((seconds % 3600) / 60);
-        const s = seconds % 60;
-        countdownEl.textContent = `Ends in: ${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
-        seconds--;
-        if (seconds >= 0) setTimeout(update, 1000);
+        const now = Date.now();
+        const diff = endTime - now;
+
+        if (diff <= 0) {
+          countdownEl.innerText = "Hurry! Almost gone!";
+          return;
+        }
+
+        const mins = Math.floor(diff / 60000);
+        const secs = Math.floor((diff % 60000) / 1000);
+        countdownEl.innerText = `Ends in: ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+        requestAnimationFrame(update);
       }
 
       update();
     }
 
-    function loadRelated(related) {
-      const list = document.getElementById("relatedList");
-      list.innerHTML = "";
-      related.slice(0, 10).forEach(product => {
-        const card = document.createElement("div");
-        card.className = "related-card";
+    async function loadRelated(ids) {
+      for (const id of ids) {
+        try {
+          const res = await fetch(workerBase + id);
+          const data = await res.json();
 
-        const url = `?product=${product.id}`;
-        const title = truncateTitle(cleanTitle(product.title || "Untitled"));
-
-        card.innerHTML = `
-          <span class="badge">🔥</span>
-          <img src="${product.image || ""}" alt="">
-          <div class="title">${title}</div>
-          <a href="${url}">View</a>
-        `;
-
-        list.appendChild(card);
-      });
+          const card = document.createElement("div");
+          card.className = "related-card";
+          card.innerHTML = `
+            <div class="badge">New</div>
+            <img src="${data.image}" alt="">
+            <div class="title">${cleanTitle(data.title)}</div>
+            <a href="?product=${id}&afftag=${affTag}">Lihat</a>
+          `;
+          document.getElementById("relatedList").appendChild(card);
+        } catch (e) {
+          console.warn("Failed to load related:", id);
+        }
+      }
     }
 
+    // Jalankan semua
     loadProduct(productId);
+    loadRating();
+    startCountdown(60);
+    loadRelated([
+      "1005006756125379",
+      "1005006800814480",
+      "1005007403628485",
+      "1005005104667727",
+      "1005007552718905",
+      "1005008119831611"
+    ]);
   </script>
 </body>
 </html>
-
