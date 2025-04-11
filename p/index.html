@@ -178,78 +178,95 @@
       return title.replace(/\s*[-|【(（]?AliExpress.*$/i, "").trim();
     }
 
+    function truncateTitle(title, maxLength = 50) {
+      return title.length > maxLength ? title.slice(0, maxLength - 3).trim() + "..." : title;
+    }
+
+    async function translateToEnglish(text) {
+      try {
+        const res = await fetch("https://libretranslate.de/translate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            q: text,
+            source: "auto",
+            target: "en",
+            format: "text"
+          })
+        });
+
+        const data = await res.json();
+        return data.translatedText || text;
+      } catch (e) {
+        console.warn("Translation failed:", e);
+        return text;
+      }
+    }
+
+    async function processTitle(title) {
+      const cleaned = cleanTitle(title);
+      const isEnglish = /^[\x00-\x7F]*$/.test(cleaned);
+      const finalTitle = isEnglish ? cleaned : await translateToEnglish(cleaned);
+      return truncateTitle(finalTitle);
+    }
+
     async function loadProduct(id) {
-      const res = await fetch(workerBase + id);
-      const data = await res.json();
+      try {
+        const res = await fetch(workerBase + id);
+        const data = await res.json();
 
-      const titleClean = cleanTitle(data.title);
-      document.title = titleClean;
-
-      document.getElementById("mainImage").src = data.image;
-      document.getElementById("title").innerText = titleClean;
-      document.getElementById("buyBtn").href = data.buy_url + "?aff_fcid=" + affTag;
+        const titleProcessed = await processTitle(data.title);
+        document.title = titleProcessed;
+        document.getElementById("title").textContent = titleProcessed;
+        document.getElementById("mainImage").src = data.image || "";
+        document.getElementById("buyBtn").href = data.url + "?aff_fcid=" + affTag;
+        document.getElementById("rating").textContent = `⭐ ${data.rating || '4.5'} / 5`;
+        startCountdown(48 * 60 * 60); // 48 jam
+        loadRelated(data.related || []);
+      } catch (e) {
+        console.error("Product load error:", e);
+        document.getElementById("title").textContent = "Product not found.";
+      }
     }
 
-    function loadRating() {
-      const rating = (4 + Math.random()).toFixed(1);
-      document.getElementById("rating").innerText = "⭐".repeat(~~rating) + (rating % 1 >= 0.5 ? "½" : "") + ` (${rating}/5)`;
-    }
-
-    function startCountdown(durationMinutes) {
-      const endTime = Date.now() + durationMinutes * 60 * 1000;
+    function startCountdown(seconds) {
       const countdownEl = document.getElementById("countdown");
 
       function update() {
-        const now = Date.now();
-        const diff = endTime - now;
-
-        if (diff <= 0) {
-          countdownEl.innerText = "Hurry! Almost gone!";
-          return;
-        }
-
-        const mins = Math.floor(diff / 60000);
-        const secs = Math.floor((diff % 60000) / 1000);
-        countdownEl.innerText = `Ends in: ${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
-        requestAnimationFrame(update);
+        const h = Math.floor(seconds / 3600);
+        const m = Math.floor((seconds % 3600) / 60);
+        const s = seconds % 60;
+        countdownEl.textContent = `Ends in: ${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}`;
+        seconds--;
+        if (seconds >= 0) setTimeout(update, 1000);
       }
 
       update();
     }
 
-    async function loadRelated(ids) {
-      for (const id of ids) {
-        try {
-          const res = await fetch(workerBase + id);
-          const data = await res.json();
+    function loadRelated(related) {
+      const list = document.getElementById("relatedList");
+      list.innerHTML = "";
+      related.slice(0, 10).forEach(product => {
+        const card = document.createElement("div");
+        card.className = "related-card";
 
-          const card = document.createElement("div");
-          card.className = "related-card";
-          card.innerHTML = `
-            <div class="badge">New</div>
-            <img src="${data.image}" alt="">
-            <div class="title">${cleanTitle(data.title)}</div>
-            <a href="?product=${id}">Lihat</a>
-          `;
-          document.getElementById("relatedList").appendChild(card);
-        } catch (e) {
-          console.warn("Failed to load related:", id);
-        }
-      }
+        const url = `?product=${product.id}`;
+        const title = truncateTitle(cleanTitle(product.title || "Untitled"));
+
+        card.innerHTML = `
+          <span class="badge">🔥</span>
+          <img src="${product.image || ""}" alt="">
+          <div class="title">${title}</div>
+          <a href="${url}">View</a>
+        `;
+
+        list.appendChild(card);
+      });
     }
 
-    // Run all
     loadProduct(productId);
-    loadRating();
-    startCountdown(60);
-    loadRelated([
-      "1005006756125379",
-      "1005006800814480",
-      "1005007403628485",
-      "1005005104667727",
-      "1005007552718905",
-      "1005008119831611"
-    ]);
   </script>
 </body>
 </html>
+
