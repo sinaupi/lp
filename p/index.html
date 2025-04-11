@@ -223,36 +223,44 @@
       update();
     }
 
-    async function loadRelatedFromCSV() {
-      try {
-        const res = await fetch(workerBase + "?csv");
-        const csvText = await res.text();
-        const rows = csvText.trim().split("\n").slice(1);
-        const products = rows.map(row => {
-          const [id, title, image, promoteUrl] = row.split(",");
-          return { id, title, image, promoteUrl };
+      async function loadRelatedFromCSV() {
+    try {
+      const res = await fetch(workerBase + "?csv");
+      const csvText = await res.text();
+      const rows = csvText.trim().split("\n");
+      const header = rows.shift().split(",");
+      const products = rows.map(row => {
+        const cols = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g); // safer CSV split
+        const data = {};
+        header.forEach((key, i) => {
+          data[key.trim()] = cols[i]?.replace(/^"|"$/g, "").trim() || "";
         });
-
-        const filtered = products.filter(p => p.id !== productId);
-        const randomSix = filtered.sort(() => Math.random() - 0.5).slice(0, 6);
-
-        const list = document.getElementById("relatedList");
-        list.innerHTML = "";
-
-        for (const p of randomSix) {
-          const card = document.createElement("div");
-          card.className = "related-card";
-          card.innerHTML = `
-            <div class="badge">New</div>
-            <img src="${p.image}" alt="">
-            <div class="title">${shortenTitle(cleanTitle(p.title))}</div>
-            <a href="${p.promoteUrl}" target="_blank">Lihat Produk</a>
-          `;
-          list.appendChild(card);
-        }
-      } catch (e) {
-        console.error("Gagal load CSV:", e);
+        return data;
+      });
+  
+      const filtered = products.filter(p => p.ItemId !== productId && p.Promote_Url && p.Image1);
+      const randomSix = filtered.sort(() => Math.random() - 0.5).slice(0, 6);
+  
+      const list = document.getElementById("relatedList");
+      list.innerHTML = "";
+  
+      for (const p of randomSix) {
+        const card = document.createElement("div");
+        card.className = "related-card";
+        card.innerHTML = `
+          <div class="badge">New</div>
+          <img src="${p.Image1}" alt="">
+          <div class="title">${shortenTitle(cleanTitle(p.Title))}</div>
+          <a href="${p.Promote_Url}" target="_blank">Lihat Produk</a>
+        `;
+        list.appendChild(card);
       }
+    } catch (e) {
+      console.error("Gagal load related:", e);
+      document.getElementById("relatedList").innerText = "Gagal load related.";
+    }
+  }
+
     }
 
     // Run all
