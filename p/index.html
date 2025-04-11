@@ -6,16 +6,19 @@
   <title>Loading...</title>
   <style>
     * { box-sizing: border-box; }
+
     body {
       font-family: 'Segoe UI', sans-serif;
       background: #f5f5f5;
       margin: 0;
       padding: 20px;
     }
+
     .container {
       max-width: 1000px;
       margin: auto;
     }
+
     .main-card {
       display: flex;
       background: white;
@@ -24,11 +27,13 @@
       overflow: hidden;
       margin-bottom: 30px;
     }
+
     .main-card img {
       width: 50%;
       object-fit: cover;
       height: auto;
     }
+
     .info {
       padding: 30px;
       display: flex;
@@ -36,14 +41,17 @@
       justify-content: center;
       width: 50%;
     }
+
     .info h1 {
       font-size: 1.6em;
       margin-bottom: 10px;
     }
+
     .rating {
       color: #f5a623;
       margin-bottom: 12px;
     }
+
     .btn {
       padding: 12px 20px;
       background-color: #ff4742;
@@ -55,23 +63,28 @@
       margin-top: 20px;
       cursor: pointer;
     }
+
     .countdown {
       margin-top: 10px;
       font-size: 0.9em;
       color: #555;
     }
+
     .related {
       margin-top: 40px;
     }
+
     .related h2 {
       margin-bottom: 20px;
     }
+
     .related-list {
       display: flex;
       gap: 20px;
       overflow-x: auto;
       padding-bottom: 10px;
     }
+
     .related-card {
       min-width: 150px;
       background: white;
@@ -86,15 +99,18 @@
       position: relative;
       transition: transform 0.2s ease;
     }
+
     .related-card:hover {
       transform: translateY(-5px);
     }
+
     .related-card img {
       width: 100%;
       height: 120px;
       object-fit: cover;
       border-radius: 6px;
     }
+
     .related-card .title {
       font-size: 0.8em;
       margin-top: 8px;
@@ -102,6 +118,7 @@
       height: 2.4em;
       overflow: hidden;
     }
+
     .related-card a {
       text-decoration: none;
       margin-top: auto;
@@ -109,6 +126,7 @@
       color: #ff4742;
       font-weight: bold;
     }
+
     .badge {
       position: absolute;
       top: 8px;
@@ -119,10 +137,12 @@
       padding: 3px 6px;
       border-radius: 4px;
     }
+
     @media (max-width: 768px) {
       .main-card {
         flex-direction: column;
       }
+
       .main-card img,
       .info {
         width: 100%;
@@ -141,6 +161,7 @@
         <a id="buyBtn" class="btn" href="#" target="_blank">🔗 Buy Now on AliExpress</a>
       </div>
     </div>
+
     <div class="related">
       <h2>Related Products</h2>
       <div class="related-list" id="relatedList"></div>
@@ -150,7 +171,7 @@
   <script>
     const params = new URLSearchParams(window.location.search);
     const productId = params.get("product") || "1005007292854280";
-    const affTag = params.get("afftag") || "cQ1BCFEo"; // <-- ambil afftag dari URL
+    const affTag = "_oCnmfYz";
     const workerBase = "https://lp.jevri-kurnia.workers.dev/?id=";
 
     function cleanTitle(title) {
@@ -160,14 +181,10 @@
     async function loadProduct(id) {
       const res = await fetch(workerBase + id);
       const data = await res.json();
-
       const titleClean = cleanTitle(data.title);
       document.title = titleClean;
-
       document.getElementById("mainImage").src = data.image;
       document.getElementById("title").innerText = titleClean;
-
-      // 🔥 Ganti URL tombol Buy dengan link dari afftag langsung
       document.getElementById("buyBtn").href = "https://s.click.aliexpress.com/e/" + affTag;
     }
 
@@ -198,39 +215,51 @@
       update();
     }
 
-    async function loadRelated(ids) {
-      for (const id of ids) {
-        try {
-          const res = await fetch(workerBase + id);
-          const data = await res.json();
+    function shortenTitle(title, limit = 50) {
+      return title.length > limit ? title.slice(0, limit - 3) + "..." : title;
+    }
+
+    async function loadRelatedFromCSV(csvPath) {
+      try {
+        const response = await fetch(csvPath);
+        const text = await response.text();
+        const lines = text.trim().split(/\r?\n/);
+        const headers = lines[0].split(",");
+        const rows = lines.slice(1);
+
+        const idx = {
+          id: headers.indexOf("ItemId"),
+          title: headers.indexOf("Title"),
+          image: headers.indexOf("Image1"),
+          url: headers.indexOf("Promote_Url"),
+        };
+
+        for (const line of rows) {
+          const values = line.split(",");
+          const title = shortenTitle(decodeURIComponent(values[idx.title]));
+          const img = decodeURIComponent(values[idx.image]);
+          const promote = decodeURIComponent(values[idx.url]);
 
           const card = document.createElement("div");
           card.className = "related-card";
           card.innerHTML = `
             <div class="badge">New</div>
-            <img src="${data.image}" alt="">
-            <div class="title">${cleanTitle(data.title)}</div>
-            <a href="?product=${id}&afftag=${affTag}">Lihat</a>
+            <img src="${img}" alt="">
+            <div class="title">${title}</div>
+            <a href="${promote}" target="_blank">Lihat</a>
           `;
           document.getElementById("relatedList").appendChild(card);
-        } catch (e) {
-          console.warn("Failed to load related:", id);
         }
+      } catch (err) {
+        console.error("Gagal memuat CSV:", err);
       }
     }
 
-    // Jalankan semua
+    // Run all
     loadProduct(productId);
     loadRating();
     startCountdown(60);
-    loadRelated([
-      "1005006756125379",
-      "1005006800814480",
-      "1005007403628485",
-      "1005005104667727",
-      "1005007552718905",
-      "1005008119831611"
-    ]);
+    loadRelatedFromCSV("data.csv");
   </script>
 </body>
 </html>
