@@ -169,37 +169,25 @@
   </div>
 
   <script>
-    // Parse URL parameters
     const params = new URLSearchParams(window.location.search);
     const productId = params.get("product") || "1005007292854280";
-    const affTag = params.get("tag") || "cQ1BCFEo"; // Default tag if not provided
+    const affTag = "cQ1BCFEo";
     const workerBase = "https://lp.jevri-kurnia.workers.dev/?id=";
-    
-    // Global variable for CSV data
-    let csvData = [];
-    const relatedCount = 6; // Number of related products to show
 
     function cleanTitle(title) {
       return title.replace(/\s*[-|【(（]?AliExpress.*$/i, "").trim();
     }
 
     async function loadProduct(id) {
-      try {
-        const res = await fetch(workerBase + id);
-        const data = await res.json();
+      const res = await fetch(workerBase + id);
+      const data = await res.json();
 
-        const titleClean = cleanTitle(data.title);
-        document.title = titleClean;
+      const titleClean = cleanTitle(data.title);
+      document.title = titleClean;
 
-        document.getElementById("mainImage").src = data.image;
-        document.getElementById("title").innerText = titleClean;
-        
-        // Use the tag from URL to form affiliate link
-        document.getElementById("buyBtn").href = `https://s.click.aliexpress.com/e/${affTag}`;
-      } catch (error) {
-        console.error("Error loading product:", error);
-        document.getElementById("title").innerText = "Product Not Found";
-      }
+      document.getElementById("mainImage").src = data.image;
+      document.getElementById("title").innerText = titleClean;
+      document.getElementById("buyBtn").href = data.buy_url + "?aff_fcid=" + affTag;
     }
 
     function loadRating() {
@@ -229,97 +217,39 @@
       update();
     }
 
-    // Function to parse CSV text
-    function parseCSV(csvText) {
-      const lines = csvText.split('\n');
-      const headers = lines[0].split(',').map(h => h.trim());
-      
-      return lines.slice(1).filter(line => line.trim() !== '').map(line => {
-        const values = line.split(',');
-        const item = {};
-        headers.forEach((header, i) => {
-          item[header] = values[i] ? values[i].trim() : '';
-        });
-        return item;
-      });
-    }
-
-    // Function to load CSV data
-    async function loadCSVData() {
-      try {
-        const response = await fetch('data.csv');
-        const csvText = await response.text();
-        csvData = parseCSV(csvText);
-        console.log("Loaded CSV data:", csvData);
-      } catch (error) {
-        console.error("Error loading CSV data:", error);
-        // Fallback to some default data if CSV fails to load
-        csvData = [
-          {
-            ItemId: "1005006756125379",
-            Title: "Wireless Earbuds Bluetooth 5.0",
-            Promote_Url: "https://bestdeals-cul.pages.dev/p/?product=1005006756125379&tag=" + affTag,
-            Image1: "https://example.com/image1.jpg"
-          },
-          {
-            ItemId: "1005006800814480",
-            Title: "Smart Watch Fitness Tracker",
-            Promote_Url: "https://bestdeals-cul.pages.dev/p/?product=1005006800814480&tag=" + affTag,
-            Image1: "https://example.com/image2.jpg"
-          }
-        ];
-      }
-    }
-
-    // Function to get random related products
-    function getRandomRelatedProducts() {
-      if (csvData.length === 0) return [];
-      
-      // Filter out current product
-      const filtered = csvData.filter(item => item.ItemId !== productId);
-      
-      // If not enough items, return all available
-      if (filtered.length <= relatedCount) return filtered;
-      
-      // Shuffle array and get first N items
-      const shuffled = [...filtered].sort(() => 0.5 - Math.random());
-      return shuffled.slice(0, relatedCount);
-    }
-
-    async function loadRelated() {
-      await loadCSVData(); // Ensure CSV data is loaded
-      const relatedProducts = getRandomRelatedProducts();
-      
-      const relatedList = document.getElementById("relatedList");
-      relatedList.innerHTML = ''; // Clear loading state
-      
-      if (relatedProducts.length === 0) {
-        relatedList.innerHTML = '<p>No related products found</p>';
-        return;
-      }
-      
-      for (const product of relatedProducts) {
+    async function loadRelated(ids) {
+      for (const id of ids) {
         try {
+          const res = await fetch(workerBase + id);
+          const data = await res.json();
+
           const card = document.createElement("div");
           card.className = "related-card";
           card.innerHTML = `
-            <div class="badge">Hot</div>
-            <img src="${product.Image1 || 'https://via.placeholder.com/150'}" alt="${product.Title}" onerror="this.src='https://via.placeholder.com/150'">
-            <div class="title">${cleanTitle(product.Title)}</div>
-            <a href="${product.Promote_Url + (product.Promote_Url.includes('?') ? '&' : '?'}tag=${affTag}">Lihat</a>
+            <div class="badge">New</div>
+            <img src="${data.image}" alt="">
+            <div class="title">${cleanTitle(data.title)}</div>
+            <a href="?product=${id}">Lihat</a>
           `;
-          relatedList.appendChild(card);
+          document.getElementById("relatedList").appendChild(card);
         } catch (e) {
-          console.warn("Failed to load related product:", product.ItemId, e);
+          console.warn("Failed to load related:", id);
         }
       }
     }
 
-    // Run all functions
+    // Run all
     loadProduct(productId);
     loadRating();
     startCountdown(60);
-    loadRelated();
+    loadRelated([
+      "1005006756125379",
+      "1005006800814480",
+      "1005007403628485",
+      "1005005104667727",
+      "1005007552718905",
+      "1005008119831611"
+    ]);
   </script>
 </body>
 </html>
